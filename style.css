@@ -119,3 +119,8 @@ footer a {
     padding: 1rem;
   }
 }
+
+/* Footer mejorado - TRABAJO EN PROGRESO */
+footer {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
