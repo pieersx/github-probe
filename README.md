@@ -1257,6 +1257,6 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 **¿Te fue útil esta guía? ¡Dale una ⭐ al repositorio!**
 
-Creado con ❤️ para la comunidad de desarrolladores
+Creado con ❤️ para la comunidad de DevOps.
 
 </div>
