@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation Template para crear una instancia EC2'
+
+Parameters:
+  KeyName:
+    Type: String
+    Description: Nombre del par de llaves existente en la region donde se despliega la instancia EC2.
+
+  SecurityGroupIP:
+    Type: String
+    Default: 0.0.0.0/0
+    Description: Rango de IPs permitidas para acceder a la instancia EC2 (formato CIDR).
+
+Resources:
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group para acceso SSH y HTTP
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp:
+            Ref: SecurityGroupIP
+          Description: SSH access
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            Ref: SecurityGroupIP
+          Description: HTTP access
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp:
+            Ref: SecurityGroupIP
+          Description: HTTPS access
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-053b0d53c279acc90
+      InstanceType: t2.micro
+      KeyName:
+        Ref: KeyName
+      SecurityGroups:
+        - Ref: EC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: ec2-github-actions
+        - Key: Environment
+          Value: production
+
+Outputs:
+  InstanceId:
+    Description: EC2 Instance ID
+    Value:
+      Ref: EC2Instance
+
+  PublicIP:
+    Description: Public IP Address
+    Value:
+      Fn::GetAtt:
+        - EC2Instance
+        - PublicIp
+
+  SecurityGroupId:
+    Description: Security Group ID
+    Value:
+      Ref: EC2SecurityGroup

@@ -1,0 +1,27 @@
+name: Deploy EC2 Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-ec2:
+    name: Deploy EC2 Infrastructure using CloudFormation
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Validate CloudFormation Template
+        run: |
+          aws cloudformation validate-template --template-body file://templates/ec2-infrastructure.yaml
