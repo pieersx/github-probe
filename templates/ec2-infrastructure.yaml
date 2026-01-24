@@ -24,6 +24,11 @@ Conditions:
 Resources:
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F1000
+            reason: "Egress rule omitted intentionally - default allows all outbound traffic. Cannot specify egress when VpcId is optional."
     Properties:
       GroupDescription: Security group para acceso SSH y HTTP
       VpcId: !If [HasVpcId, !Ref VpcId, !Ref "AWS::NoValue"]
