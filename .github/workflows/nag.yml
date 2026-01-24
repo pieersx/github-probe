@@ -19,7 +19,6 @@ jobs:
       - name: Run cfn-nag
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          cfn-nag --version
           cfn_nag_scan --input-path ./templates/ec2-infrastructure.yaml
 
       - name: Simple test
