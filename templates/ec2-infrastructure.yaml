@@ -57,7 +57,7 @@ Resources:
       InstanceType: t3.small
       KeyName:
         Ref: KeyName
-      SecurityGroupsIds:
+      SecurityGroupIds:
         - Ref: EC2SecurityGroup
       Tags:
         - Key: Name
