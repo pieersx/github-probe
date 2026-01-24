@@ -23,12 +23,14 @@ Resources:
           CidrIp:
             Ref: SecurityGroupIP
           Description: SSH access
+
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp:
             Ref: SecurityGroupIP
           Description: HTTP access
+
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -36,11 +38,17 @@ Resources:
             Ref: SecurityGroupIP
           Description: HTTPS access
 
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic
+
+
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-053b0d53c279acc90
-      InstanceType: t2.micro
+      ImageId: ami-0b6c6ebed2801a5cb
+      InstanceType: t3.small
       KeyName:
         Ref: KeyName
       SecurityGroups:
