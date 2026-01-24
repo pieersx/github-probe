@@ -50,11 +50,6 @@ Resources:
             Ref: SecurityGroupIP
           Description: HTTPS access
 
-      SecurityGroupEgress:
-        - IpProtocol: -1
-          CidrIp: 0.0.0.0/0
-          Description: Allow all outbound traffic
-
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
