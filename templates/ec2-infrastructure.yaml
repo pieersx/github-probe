@@ -6,6 +6,10 @@ Parameters:
     Type: String
     Description: Nombre del par de llaves existente en la region donde se despliega la instancia EC2.
 
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC donde se despliega la instancia (default VPC)
+
   SecurityGroupIP:
     Type: String
     Default: 0.0.0.0/0
@@ -16,6 +20,9 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security group para acceso SSH y HTTP
+      VpcId:
+        Ref: VpcId
+
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -42,7 +49,6 @@ Resources:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic
-
 
   EC2Instance:
     Type: AWS::EC2::Instance
