@@ -4,24 +4,29 @@ Description: 'CloudFormation Template para crear una instancia EC2'
 Parameters:
   KeyName:
     Type: String
-    Description: Nombre del par de llaves existente en la region donde se despliega la instancia EC2.
+    Default: ""
+    Description: Nombre del par de llaves existente. (opcional)
 
   VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: VPC donde se despliega la instancia (default VPC)
+    Type: String
+    Default: ""
+    Description: VPC donde se despliega la instancia. (opcional - usa default VPC)
 
   SecurityGroupIP:
     Type: String
     Default: 0.0.0.0/0
     Description: Rango de IPs permitidas para acceder a la instancia EC2 (formato CIDR).
 
+Conditions:
+  HasKeyName: !Not [!Equals [!Ref KeyName, ""]]
+  HasVpcId: !Not [!Equals [!Ref VpcId, ""]]
+
 Resources:
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security group para acceso SSH y HTTP
-      VpcId:
-        Ref: VpcId
+      VpcId: !If [HasVpcId, !Ref VpcId, !Ref "AWS::NoValue"]
 
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -55,8 +60,7 @@ Resources:
     Properties:
       ImageId: ami-0b6c6ebed2801a5cb
       InstanceType: t3.small
-      KeyName:
-        Ref: KeyName
+      KeyName: !If [HasKeyName, !Ref KeyName, !Ref "AWS::NoValue"]
       SecurityGroupIds:
         - Ref: EC2SecurityGroup
       Tags:
