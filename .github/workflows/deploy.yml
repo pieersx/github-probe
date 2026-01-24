@@ -6,17 +6,47 @@ on:
       - main
 
 jobs:
+  cloudformation-linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Setup Cloud Formation Linter with Latest Version
+        uses: scottbrenner/cfn-lint-action@v2
+
+      - name: Print the Cloud Formation Linter Version & run Linter.
+        run: |
+          cfn-lint --version
+          cfn-lint -t ./templates/ec2-infrastructure.yaml
+
+  cloudformation-nag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Simple test
+        uses: stelligent/cfn_nag@v0.8.0
+        with:
+          input_path: ./templates
+
   deploy-ec2:
     name: Deploy EC2 Infrastructure using CloudFormation
     runs-on: ubuntu-latest
     environment: production
+    needs:
+      - cloudformation-linter
+      - cloudformation-nag
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -24,4 +54,13 @@ jobs:
 
       - name: Validate CloudFormation Template
         run: |
-          aws cloudformation validate-template --template-body file://templates/ec2-infrastructure.yaml
+          aws cloudformation validate-template \
+            --template-body file://templates/ec2-infrastructure.yaml
+
+      - name: Deploy CloudFormation Stack
+        run: |
+          aws cloudformation deploy \
+            --stack-name ec2-infrastructure \
+            --template-file templates/ec2-infrastructure.yaml \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset
