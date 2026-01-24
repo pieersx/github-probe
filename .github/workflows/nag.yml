@@ -1,0 +1,28 @@
+name: CloudFormation Nag Scan
+
+on: [push]
+
+jobs:
+  cfn-nag-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install cfn-nag
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew install ruby brew-gem
+          brew gem install cfn-nag
+
+      - name: Run cfn-nag
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          cfn-nag --version
+          cfn_nag_scan --input-path ./templates/ec2-infrastructure.yaml
+
+      - name: Simple test
+        uses: stelligent/cfn_nag@master
+        with:
+          input_path: tests
